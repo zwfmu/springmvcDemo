@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans  
+	http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/context  
+	http://www.springframework.org/schema/context/spring-context.xsd  
+	http://www.springframework.org/schema/aop  
+    http://www.springframework.org/schema/aop/spring-aop.xsd  
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx.xsd  
+	http://www.springframework.org/schema/mvc  
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/task  
+	http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+	<!-- 开启注解机制 -->
+	<mvc:annotation-driven />
+	<!-- task任务扫描注解 -->  
+	<task:annotation-driven/>
+	<!-- 激活自动代理功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true" />
+	<!-- 自动扫描所有注解该路径 -->
+	<context:component-scan base-package="cn.medlog.oms" />
+	<!-- 解决sprsing mvc @ResponseBody 中文乱码 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter" p:supportedMediaTypes="text/plain;charset=UTF-8" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 该 BeanPostProcessor 将自动起作用，对标注 @Autowired 的 Bean 进行自动注入 -->
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<!-- 下载工具类 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" p:defaultEncoding="UTF-8" />
+
+	<!-- 视图解释类 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/page/" />
+		<!--可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑 -->
+		<property name="suffix" value=".jsp" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	
+	<mvc:resources mapping="/api-docs/**" location="/api-docs/" />
+	<mvc:resources mapping="/docapi/**" location="/docapi/" />
+
+	
+	<!-- 全局跨域 TODO 关闭全局跨域 -->
+	<mvc:cors>
+		<mvc:mapping path="/**" allowed-origins="*"
+			allowed-methods="GET, POST, OPTIONS" allowed-headers="*" />
+	</mvc:cors>
+
+	<!-- 对静态资源文件的访问 方案一 （二选一） -->
+	<!-- <mvc:default-servlet-handler/> -->
+
+	<!-- 对静态资源文件的访问 方案二 （二选一） -->
+	<!-- <mvc:resources mapping="/images/**" location="/images/" cache-period="31556926"/> 
+		<mvc:resources mapping="/js/**" location="/js/" cache-period="31556926"/> 
+		<mvc:resources mapping="/css/**" location="/css/" cache-period="31556926"/> -->
+	<!-- <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		线程池活跃的线程数
+		<property name="corePoolSize" value="5" />
+		线程池最大活跃的线程数
+		<property name="maxPoolSize" value="10" />
+		队列的最大容量
+		<property name="queueCapacity" value="25" />
+	</bean> -->
+
+	<!-- 异步线程池 -->
+	<!-- <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		核心线程数
+		<property name="corePoolSize" value="10" />
+		最大线程数
+		<property name="maxPoolSize" value="20" />
+		队列最大长度 >=mainExecutor.maxSize
+		<property name="queueCapacity" value="35" />
+		线程池维护线程所允许的空闲时间
+		<property name="keepAliveSeconds" value="10" />
+		线程池对拒绝任务(无线程可用)的处理策略
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+	</bean>
+
+	<bean id="threadPoolHelper" class="cn.medlog.oms.helper.ThreadPoolHelper">
+		<constructor-arg ref="taskExecutor" />
+	</bean> -->
+	
+</beans>
