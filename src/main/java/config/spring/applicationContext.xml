@@ -59,7 +59,6 @@
  
 	<!-- 使用annotation定义数据库事务，这样可以在类或方法中直接使用@Transactional注解来声明事务 -->
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-	<tx:annotation-driven transaction-manager="wmsTransactionManager"  proxy-target-class="true" />
 
 	
 </beans>

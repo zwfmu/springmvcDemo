@@ -26,7 +26,7 @@
 	<!-- 激活自动代理功能 -->
 	<aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true" />
 	<!-- 自动扫描所有注解该路径 -->
-	<context:component-scan base-package="cn.medlog.oms" />
+	<context:component-scan base-package="cn.wfzhu.springdemo" />
 	<!-- 解决sprsing mvc @ResponseBody 中文乱码 -->
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
